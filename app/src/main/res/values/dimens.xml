@@ -1,0 +1,11 @@
+<resources>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="standard_offset">8dp</dimen>
+    <dimen name="standard_offset_x2">16dp</dimen>
+    <dimen name="standard_offset_x4">32dp</dimen>
+    <dimen name="dialog_location_option_height">56dp</dimen>
+    <dimen name="dialog_btn_radius">12dp</dimen>
+    <dimen name="dialog_option_text_size">20sp</dimen>
+</resources>
