@@ -13,6 +13,7 @@ import com.rgand.x_prt.lastfmhits.listener.OnAlbumItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.album.AlbumImageModel;
 import com.rgand.x_prt.lastfmhits.model.album.AlbumModel;
 import com.rgand.x_prt.lastfmhits.util.AppConstants;
+import com.rgand.x_prt.lastfmhits.util.NumberFormatter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -94,7 +95,7 @@ public class TopAlbumRVAdapter extends RecyclerView.Adapter<TopAlbumRVAdapter.Al
             tvAlbumName.setText(model.getName() != null
                     ? model.getName() : itemView.getContext().getString(R.string.unknown_txt));
 
-            String numOfListeners = model.getPlaycount()
+            String numOfListeners = NumberFormatter.spacesForBigNumber(model.getPlaycount())
                     + " "
                     + itemView.getContext().getString(R.string.plays_suffix_txt);
             tvPlays.setText(numOfListeners);

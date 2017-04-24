@@ -11,6 +11,7 @@ import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.listener.OnArtistItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.artist.ArtistImageModel;
 import com.rgand.x_prt.lastfmhits.model.artist.ArtistModel;
+import com.rgand.x_prt.lastfmhits.util.NumberFormatter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class TopArtistRVAdapter extends RecyclerView.Adapter<TopArtistRVAdapter.
 
             tvArtistName.setText(model.getName());
 
-            String numOfListeners = model.getListeners()
+            String numOfListeners = NumberFormatter.spacesForBigNumber(model.getListeners())
                     + " "
                     + itemView.getContext().getString(R.string.listeners_suffix_txt);
             tvListeners.setText(numOfListeners);

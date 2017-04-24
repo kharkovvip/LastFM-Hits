@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.adapter.TopAlbumRVAdapter;
+import com.rgand.x_prt.lastfmhits.base.BaseActivity;
 import com.rgand.x_prt.lastfmhits.listener.OnAlbumItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.album.AlbumModel;
 import com.rgand.x_prt.lastfmhits.model.album.ArtistInfoData;

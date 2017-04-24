@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.adapter.TopArtistRVAdapter;
+import com.rgand.x_prt.lastfmhits.base.BaseActivity;
 import com.rgand.x_prt.lastfmhits.listener.OnArtistItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.artist.ArtistModel;
 import com.rgand.x_prt.lastfmhits.model.artist.GeoArtistData;

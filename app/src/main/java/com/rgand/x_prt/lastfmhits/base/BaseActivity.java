@@ -1,4 +1,4 @@
-package com.rgand.x_prt.lastfmhits.activity;
+package com.rgand.x_prt.lastfmhits.base;
 
 import android.content.Context;
 import android.content.DialogInterface;
