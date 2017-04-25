@@ -21,6 +21,8 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class SpinnerDialog extends DialogFragment {
 
+    private Dialog dialog;
+
     public static SpinnerDialog newInstance() {
         return new SpinnerDialog();
     }
@@ -33,13 +35,14 @@ public class SpinnerDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        dialog = getDialog();
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return inflater.inflate(R.layout.dialog_spinner, container, false);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Dialog dialog = getDialog();
         if (dialog != null) {
             dialog.setCancelable(false);
 
