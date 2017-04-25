@@ -7,8 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.rgand.x_prt.lastfmhits.R;
 
+import static com.rgand.x_prt.lastfmhits.util.AppConstants.SPLASH_ANIMATION_DELAY;
+
 public class SplashActivity extends AppCompatActivity {
 
+    /**
+     * there is no longtime NET-requests or loading of data therefore splash is created only
+     * for presentation of application's creators
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +28,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 3000);
+        }, SPLASH_ANIMATION_DELAY);
     }
 }

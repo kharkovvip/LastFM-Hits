@@ -6,6 +6,8 @@ package com.rgand.x_prt.lastfmhits.util;
 
 public class AppConstants {
 
+    public static final long SPLASH_ANIMATION_DELAY = 3000;
+
     public static final String API_BASE_URL = " http://ws.audioscrobbler.com/";
     public static final String API_REQUEST_FORMAT = "json";
     public static final String API_KEY = "e81f61890b7ff8633ca024d0faa449e7";

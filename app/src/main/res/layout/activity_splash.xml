@@ -7,10 +7,9 @@
     tools:context="com.rgand.x_prt.lastfmhits.activity.SplashActivity">
 
     <ProgressBar
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="@dimen/splash_progressbar_size"
+        android:layout_height="@dimen/splash_progressbar_size"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp" />
-
+        android:layout_marginBottom="@dimen/standard_offset_x2" />
 </RelativeLayout>

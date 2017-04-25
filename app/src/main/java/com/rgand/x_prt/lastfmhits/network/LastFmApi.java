@@ -13,6 +13,12 @@ import retrofit2.http.Query;
 
 public interface LastFmApi {
 
+    /**
+     * @param callingMethod  - API method
+     * @param chosenCountry  - country selected by the user from dialog (hardcoded)
+     * @param artistsPerPage - number of requested artists
+     * @param pageNumber     - number of page (for pagination)
+     */
     @GET("2.0/")
     Call<GeoArtistData> getTopArtists(
             @Query("method") String callingMethod,
@@ -20,6 +26,12 @@ public interface LastFmApi {
             @Query("limit") String artistsPerPage,
             @Query("page") String pageNumber);
 
+    /**
+     * @param callingMethod - API method
+     * @param artist - artist selected by the user from list
+     * @param albumsPerPage - number of requested albums
+     * @param pageNumber - number of page (for pagination)
+     */
     @GET("2.0/")
     Call<ArtistInfoData> getTopAlbums(
             @Query("method") String callingMethod,

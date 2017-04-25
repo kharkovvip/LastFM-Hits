@@ -11,6 +11,9 @@ import java.util.Locale;
 
 public class NumberFormatter {
 
+    /**
+     * method was created to separate large numbers by thousands, millions, billions, etc.
+     */
     public static String spacesForBigNumber(String numberAsText) {
         DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();

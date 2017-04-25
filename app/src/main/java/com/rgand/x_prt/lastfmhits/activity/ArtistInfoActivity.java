@@ -116,6 +116,9 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * request to API for getting top albums of chosen artist
+     */
     private void getTopAlbumsRequest() {
         if (!isSwipeRefreshing) {
             showProgressBar();
@@ -142,13 +145,18 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
         getTopAlbumsRequest.execute();
     }
 
-
     private List<AlbumModel> sortAlbumList(List<AlbumModel> albumModels) {
         Collections.sort(albumModels, isSortingByPlaycount
                 ? new AlbumByPlayCountComparator() : new AlbumByNameComparator());
         return albumModels;
     }
 
+    /**
+     * The test task does not imply a transition to the screen with the songs of the selected album,
+     * but I decided to do, at least, the transition to the album page on the www.last.fm
+     *
+     * @param albumPublicUrl - public link to the album's page
+     */
     @Override
     public void onAlbumClicked(String albumPublicUrl) {
         Intent intent = new Intent(Intent.ACTION_VIEW);

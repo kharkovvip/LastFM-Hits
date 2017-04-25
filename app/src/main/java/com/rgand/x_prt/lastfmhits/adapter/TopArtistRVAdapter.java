@@ -75,6 +75,7 @@ public class TopArtistRVAdapter extends RecyclerView.Adapter<TopArtistRVAdapter.
 
         void bind(final ArtistModel model) {
             String largePhotoUrl = "";
+            //I need mega-sized photo for Artist's Info screen, 'cause large photo is too low quality
             String megaPhotoUrl = "";
             List<ArtistImageModel> imageModelList = model.getImageModelList();
             for (ArtistImageModel image :

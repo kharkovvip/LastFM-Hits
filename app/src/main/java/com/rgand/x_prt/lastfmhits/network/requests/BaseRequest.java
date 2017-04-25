@@ -13,7 +13,7 @@ import retrofit2.Response;
 
 public abstract class BaseRequest<T> {
 
-    private String errorMessage = "";
+    private String errorMessage = "Unknown server error";
 
     private RequestListener<T> listener;
     private Callback<T> callback = new Callback<T>() {

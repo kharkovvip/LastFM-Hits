@@ -14,8 +14,4 @@ public class ArtistInfoData {
     public TopAlbumModel getTopartists() {
         return topAlbumModel;
     }
-
-    public void setTopartists(TopAlbumModel topAlbumModel) {
-        this.topAlbumModel = topAlbumModel;
-    }
 }

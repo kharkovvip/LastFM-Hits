@@ -29,6 +29,13 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState, persistentState);
     }
 
+    public void checkInternetConnection(Context context, DialogInterface.OnDismissListener listener) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() == null) {
+            showInternetConnectionDialog(listener);
+        }
+    }
+
     private void showInternetConnectionDialog(DialogInterface.OnDismissListener listener) {
         if (networkDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -57,13 +64,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     };
-
-    public void checkInternetConnection(Context context, DialogInterface.OnDismissListener listener) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm.getActiveNetworkInfo() == null) {
-            showInternetConnectionDialog(listener);
-        }
-    }
 
     public void showProgressBar() {
         spinnerDialog = SpinnerDialog.newInstance();

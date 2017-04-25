@@ -16,8 +16,4 @@ public class TopAlbumModel {
     public List<AlbumModel> getArtistModelList() {
         return albumModels;
     }
-
-    public void setArtistModelList(List<AlbumModel> albumModels) {
-        this.albumModels = albumModels;
-    }
 }

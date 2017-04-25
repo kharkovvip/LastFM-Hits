@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="4dp"
+    android:layout_margin="@dimen/standard_offset_x0_5"
     android:background="@drawable/rv_item_selector"
-    android:padding="2dp">
+    android:padding="@dimen/colored_gradient_padding">
 
     <ImageView
         android:id="@+id/iv_artist_photo"
@@ -22,7 +22,7 @@
         android:layout_gravity="left|bottom"
         android:background="@drawable/artist_name_gradient_background"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="@dimen/standard_offset">
 
         <TextView
             android:id="@+id/tv_artist_name"
@@ -39,10 +39,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:textColor="@android:color/white"
-            android:textSize="12sp"
+            android:textSize="@dimen/item_artist_listeners_text_size"
             tools:text="listeners" />
-
-
     </LinearLayout>
-
 </FrameLayout>

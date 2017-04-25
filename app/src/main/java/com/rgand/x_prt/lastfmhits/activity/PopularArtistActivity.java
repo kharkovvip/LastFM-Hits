@@ -98,6 +98,10 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
         return true;
     }
 
+    /**
+     * "Feel free to take a creative freedom and show your design skills" in task description was written,
+     * so I decided to make sorting at that menu and to and to move country's selector to FloatingActionButton
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -114,6 +118,9 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * request to API for getting top artists of chosen (hardcoded) country
+     */
     private void getTopArtistsRequest() {
         if (!isSwipeRefreshing) {
             showProgressBar();
@@ -146,6 +153,9 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
         return artistModelList;
     }
 
+    /**
+     * here must be GoogleMaps screen calling or GooglePlaces search tool
+     */
     private void showLocationDialog() {
         View view = View.inflate(this, R.layout.dialog_select_location, null);
         if (selectLocationDialog == null) {

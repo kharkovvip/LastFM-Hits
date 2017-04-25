@@ -14,8 +14,4 @@ public class GeoArtistData {
     public TopArtistsModel getTopartists() {
         return topartists;
     }
-
-    public void setTopartists(TopArtistsModel topartists) {
-        this.topartists = topartists;
-    }
 }

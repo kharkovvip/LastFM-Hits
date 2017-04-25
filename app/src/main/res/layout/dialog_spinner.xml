@@ -6,6 +6,6 @@
     android:orientation="vertical">
 
     <ProgressBar
-        android:layout_width="56dp"
-        android:layout_height="56dp" />
+        android:layout_width="@dimen/spinner_progressbar_size"
+        android:layout_height="@dimen/spinner_progressbar_size" />
 </LinearLayout>

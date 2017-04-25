@@ -56,6 +56,8 @@ public class TopAlbumRVAdapter extends RecyclerView.Adapter<TopAlbumRVAdapter.Al
         }
     }
 
+    //I didn't have enough time to create empty Recycler placeholder so I decided to show blanks
+    //for albums witch have to been loaded
     @Override
     public int getItemCount() {
         return albumModelList.isEmpty() ? AppConstants.TOP_ITEMS_COUNT : albumModelList.size();
