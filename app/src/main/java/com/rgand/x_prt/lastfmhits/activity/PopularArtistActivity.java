@@ -141,7 +141,7 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
             public void onError(String errorMessage) {
                 hideProgressBar();
                 swipeRefreshLayout.setRefreshing(false);
-                checkInternetConnection(PopularArtistActivity.this, PopularArtistActivity.this);
+//                checkInternetConnection(PopularArtistActivity.this, PopularArtistActivity.this);
             }
         });
         getArtistsRequest.execute();

@@ -11,7 +11,7 @@ public class ArtistInfoData {
     @SerializedName("topalbums")
     private TopAlbumModel topAlbumModel;
 
-    public TopAlbumModel getTopartists() {
+    public TopAlbumModel getTopAlbums() {
         return topAlbumModel;
     }
 }

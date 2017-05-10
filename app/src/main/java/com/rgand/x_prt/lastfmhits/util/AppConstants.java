@@ -6,6 +6,9 @@ package com.rgand.x_prt.lastfmhits.util;
 
 public class AppConstants {
 
+    public static final String APP_CASH_DIRECTORY = "LastFMCash";
+    public static final String APP_CASH_FILE_NAME = "cover.png";
+
     public static final long SPLASH_ANIMATION_DELAY = 3000;
 
     public static final String API_BASE_URL = " http://ws.audioscrobbler.com/";
@@ -21,4 +24,5 @@ public class AppConstants {
 
     public static final String IMAGE_MODEL_LARGE_KEY = "large";
     public static final String IMAGE_MODEL_MEGA_KEY = "mega";
+    public static final String IMAGE_MODEL_IS_EMPTY_KEY = "empty";
 }

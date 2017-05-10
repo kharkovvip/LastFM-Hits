@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.adapter.TopAlbumRVAdapter;
 import com.rgand.x_prt.lastfmhits.base.BaseActivity;
+import com.rgand.x_prt.lastfmhits.database.DataHandler;
+import com.rgand.x_prt.lastfmhits.database.task.SaveAlbumTask;
 import com.rgand.x_prt.lastfmhits.listener.OnAlbumItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.album.AlbumModel;
 import com.rgand.x_prt.lastfmhits.model.album.ArtistInfoData;
@@ -33,7 +35,7 @@ import java.util.List;
 import static com.rgand.x_prt.lastfmhits.util.AppConstants.TOP_ARTISTS_RV_PHOTO_SIZE;
 
 public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClickListener,
-        DialogInterface.OnDismissListener, SwipeRefreshLayout.OnRefreshListener {
+        DialogInterface.OnDismissListener, SwipeRefreshLayout.OnRefreshListener, SaveAlbumTask.OnTaskFinishedListener {
 
     public static final String ARTIST_NAME_KEY = "chosen_artist_name";
     public static final String ARTIST_PHOTO_KEY = "chosen_artist_photo";
@@ -47,6 +49,8 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
     private TopAlbumRVAdapter infoRVAdapter;
     private List<AlbumModel> albumModelList = new ArrayList<>();
 
+    private DataHandler dataHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,13 +60,30 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
         chosenArtistName = getIntent().getStringExtra(ARTIST_NAME_KEY);
         chosenArtistPhotoUrl = getIntent().getStringExtra(ARTIST_PHOTO_KEY);
 
+        dataHandler = new DataHandler(ArtistInfoActivity.this);
+
         initViews();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        dataHandler.open();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        albumModelList = dataHandler.getAlbumList(chosenArtistName);
+        infoRVAdapter.setList(sortAlbumList(albumModelList));
+
         getTopAlbumsRequest();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dataHandler.close();
     }
 
     private void initViews() {
@@ -129,17 +150,25 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
         getTopAlbumsRequest.setListener(new RequestListener<ArtistInfoData>() {
             @Override
             public void onSuccess(ArtistInfoData result) {
-                albumModelList = result.getTopartists().getArtistModelList();
+                albumModelList = result.getTopAlbums().getAlbumModelList();
                 infoRVAdapter.setList(sortAlbumList(albumModelList));
-                hideProgressBar();
-                swipeRefreshLayout.setRefreshing(false);
+
+                SaveAlbumTask sat = new SaveAlbumTask(
+                        ArtistInfoActivity.this,
+                        ArtistInfoActivity.this,
+                        albumModelList,
+                        chosenArtistName);
+                sat.execute();
             }
 
             @Override
             public void onError(String errorMessage) {
+//                checkInternetConnection(ArtistInfoActivity.this, ArtistInfoActivity.this);
+//                albumModelList = dataHandler.getAlbumList(chosenArtistName);
+//                infoRVAdapter.setList(sortAlbumList(albumModelList));
+
                 hideProgressBar();
                 swipeRefreshLayout.setRefreshing(false);
-                checkInternetConnection(ArtistInfoActivity.this, ArtistInfoActivity.this);
             }
         });
         getTopAlbumsRequest.execute();
@@ -179,5 +208,13 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
     public void onRefresh() {
         isSwipeRefreshing = true;
         getTopAlbumsRequest();
+    }
+
+    @Override
+    public void onDataLoaded(List<AlbumModel> list) {
+        infoRVAdapter.setList(sortAlbumList(list));
+
+        hideProgressBar();
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

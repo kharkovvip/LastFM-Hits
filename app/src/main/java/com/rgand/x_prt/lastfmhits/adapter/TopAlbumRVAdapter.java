@@ -1,7 +1,6 @@
 package com.rgand.x_prt.lastfmhits.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +9,15 @@ import android.widget.TextView;
 
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.listener.OnAlbumItemClickListener;
-import com.rgand.x_prt.lastfmhits.model.album.AlbumImageModel;
 import com.rgand.x_prt.lastfmhits.model.album.AlbumModel;
 import com.rgand.x_prt.lastfmhits.util.AppConstants;
 import com.rgand.x_prt.lastfmhits.util.NumberFormatter;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rgand.x_prt.lastfmhits.util.AppConstants.IMAGE_MODEL_LARGE_KEY;
 import static com.rgand.x_prt.lastfmhits.util.AppConstants.TOP_ALBUM_RV_PHOTO_SIZE;
 
 /**
@@ -77,23 +75,13 @@ public class TopAlbumRVAdapter extends RecyclerView.Adapter<TopAlbumRVAdapter.Al
         }
 
         void bind(final AlbumModel model) {
-            String largePhotoUrl = "";
-            List<AlbumImageModel> imageModelList = model.getImageModelList();
-            for (AlbumImageModel image :
-                    imageModelList) {
-                if (image.getSize().equals(IMAGE_MODEL_LARGE_KEY)) {
-                    largePhotoUrl = image.getImageUrl();
-                }
-            }
             Picasso.with(itemView.getContext())
-                    .load(!TextUtils.isEmpty(largePhotoUrl)
-                            ? largePhotoUrl : itemView.getContext().getString(R.string.unknown_txt))
+                    .load(new File(model.getPhotoFilePath()))
                     .resize(TOP_ALBUM_RV_PHOTO_SIZE, TOP_ALBUM_RV_PHOTO_SIZE)
                     .centerCrop()
                     .placeholder(R.drawable.no_image_placeholder)
                     .error(R.drawable.no_image_placeholder)
                     .into(ivArtistPhoto);
-
             tvAlbumName.setText(model.getName() != null
                     ? model.getName() : itemView.getContext().getString(R.string.unknown_txt));
 

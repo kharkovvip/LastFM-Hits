@@ -13,7 +13,7 @@ public class TopAlbumModel {
     @SerializedName("album")
     private List<AlbumModel> albumModels;
 
-    public List<AlbumModel> getArtistModelList() {
+    public List<AlbumModel> getAlbumModelList() {
         return albumModels;
     }
 }
