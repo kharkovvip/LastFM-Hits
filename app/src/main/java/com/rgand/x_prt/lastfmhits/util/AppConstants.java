@@ -8,6 +8,7 @@ public class AppConstants {
 
     public static final String APP_CASH_DIRECTORY = "LastFMCash";
     public static final String APP_CASH_FILE_NAME = "cover.png";
+    public static final String MEGA_FILE_PREFIX = "mega_";
 
     public static final long SPLASH_ANIMATION_DELAY = 3000;
 

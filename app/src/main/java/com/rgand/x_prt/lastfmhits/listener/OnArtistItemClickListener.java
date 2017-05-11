@@ -6,5 +6,5 @@ package com.rgand.x_prt.lastfmhits.listener;
 
 public interface OnArtistItemClickListener {
 
-    void onArtistItemClicked(String artistName, String artistPhoto);
+    void onArtistItemClicked(String artistName);
 }

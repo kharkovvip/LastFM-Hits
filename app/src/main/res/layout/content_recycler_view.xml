@@ -9,10 +9,29 @@
     tools:context="com.rgand.x_prt.lastfmhits.activity.PopularArtistActivity"
     tools:showIn="@layout/activity_popular">
 
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/rv_top_artists"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/standard_offset"
-        android:orientation="vertical" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/rv_top_artists"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/standard_offset"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/empty_view_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:paddingLeft="@dimen/standard_offset_x4"
+            android:paddingRight="@dimen/standard_offset_x4"
+            android:paddingTop="@dimen/item_album_photo_size"
+            android:text="@string/nothing_to_show_txt"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+    </RelativeLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

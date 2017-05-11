@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.listener.OnAlbumItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.album.AlbumModel;
-import com.rgand.x_prt.lastfmhits.util.AppConstants;
 import com.rgand.x_prt.lastfmhits.util.NumberFormatter;
 import com.squareup.picasso.Picasso;
 
@@ -58,7 +57,7 @@ public class TopAlbumRVAdapter extends RecyclerView.Adapter<TopAlbumRVAdapter.Al
     //for albums witch have to been loaded
     @Override
     public int getItemCount() {
-        return albumModelList.isEmpty() ? AppConstants.TOP_ITEMS_COUNT : albumModelList.size();
+        return albumModelList.size();
     }
 
     class AlbumViewHolder extends RecyclerView.ViewHolder {

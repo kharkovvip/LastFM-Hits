@@ -9,16 +9,14 @@ import android.widget.TextView;
 
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.listener.OnArtistItemClickListener;
-import com.rgand.x_prt.lastfmhits.model.artist.ArtistImageModel;
 import com.rgand.x_prt.lastfmhits.model.artist.ArtistModel;
 import com.rgand.x_prt.lastfmhits.util.NumberFormatter;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rgand.x_prt.lastfmhits.util.AppConstants.IMAGE_MODEL_LARGE_KEY;
-import static com.rgand.x_prt.lastfmhits.util.AppConstants.IMAGE_MODEL_MEGA_KEY;
 import static com.rgand.x_prt.lastfmhits.util.AppConstants.TOP_ARTISTS_RV_PHOTO_SIZE;
 
 /**
@@ -74,22 +72,8 @@ public class TopArtistRVAdapter extends RecyclerView.Adapter<TopArtistRVAdapter.
         }
 
         void bind(final ArtistModel model) {
-            String largePhotoUrl = "";
-            //I need mega-sized photo for Artist's Info screen, 'cause large photo is too low quality
-            String megaPhotoUrl = "";
-            List<ArtistImageModel> imageModelList = model.getImageModelList();
-            for (ArtistImageModel image :
-                    imageModelList) {
-                if (image.getSize().equals(IMAGE_MODEL_LARGE_KEY)) {
-                    largePhotoUrl = image.getImageUrl();
-                }
-                if (image.getSize().equals(IMAGE_MODEL_MEGA_KEY)) {
-                    megaPhotoUrl = image.getImageUrl();
-                }
-            }
-
             Picasso.with(itemView.getContext())
-                    .load(largePhotoUrl)
+                    .load(new File(model.getLargePhotoFilePath()))
                     .resize(TOP_ARTISTS_RV_PHOTO_SIZE, TOP_ARTISTS_RV_PHOTO_SIZE)
                     .centerCrop()
                     .placeholder(R.drawable.no_image_placeholder)
@@ -103,12 +87,11 @@ public class TopArtistRVAdapter extends RecyclerView.Adapter<TopArtistRVAdapter.
                     + itemView.getContext().getString(R.string.listeners_suffix_txt);
             tvListeners.setText(numOfListeners);
 
-            final String finalPhotoUrl = megaPhotoUrl;
+            //I need mega-sized photo for Artist's Info screen, 'cause large photo is too low quality
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onArtistItemClickListener.onArtistItemClicked(
-                            model.getName(), finalPhotoUrl);
+                    onArtistItemClickListener.onArtistItemClicked(model.getName());
                 }
             });
         }

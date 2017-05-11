@@ -21,4 +21,8 @@
 
     <string name="retry_txt">Retry</string>
     <string name="exit_txt">Exit</string>
+    <string name="ok_txt">OK</string>
+    <string name="offline_mode_txt">Offline mode. Check internet connection and refresh the screen.</string>
+    <string name="please_wait_txt">Please wait…</string>
+    <string name="nothing_to_show_txt">There are no saved data in the cache.\nYou must connect to the Internet to download the information you need.</string>
 </resources>

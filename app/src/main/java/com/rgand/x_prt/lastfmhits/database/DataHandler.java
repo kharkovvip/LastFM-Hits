@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
 import com.rgand.x_prt.lastfmhits.model.album.AlbumModel;
+import com.rgand.x_prt.lastfmhits.model.artist.ArtistModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,20 +16,38 @@ import java.util.List;
 public class DataHandler {
 
     private static final String DATA_BASE_NAME = "lfm_database";
-    private static final String ALBUMS_TABLE_NAME = "albums_table";
-    private static final String ARTISTS_TABLE_NAME = "artists_table";
+    private static final String ALBUMS_TABLE = "albums_table";
+    private static final String ARTISTS_TABLE = "artists_table";
     private static final int DATABASE_VERSION = 1;
 
+    private static final String ARTIST_COUNTRY = "artist_country";
     private static final String ARTIST_NAME = "artist_name";
+    private static final String ARTIST_LISTENERS = "artist_listeners";
+    private static final String ARTIST_LARGE_PHOTO = "artist_large_image_url";
+    private static final String ARTIST_LARGE_PHOTO_PATH = "artist_large_photo_path";
+    private static final String ARTIST_MEGA_PHOTO = "artist_mega_image_url";
+    private static final String ARTIST_MEGA_PHOTO_PATH = "artist_mega_photo_path";
 
-    private static final String ALBUM_NAME = "name";
-    private static final String ALBUM_PLAYCOUNT = "playcount";
-    private static final String ALBUM_URL = "url";
-    private static final String ALBUM_LARGE_PHOTO = "largeImageUrl";
+    private static final String ALBUM_NAME = "album_name";
+    private static final String ALBUM_PLAYCOUNT = "album_playcount";
+    private static final String ALBUM_URL = "album_url";
+    private static final String ALBUM_LARGE_PHOTO = "album_large_image_url";
     private static final String ALBUM_PHOTO_PATH = "album_photo_path";
 
+    private static final String ARTIST_SQL = "CREATE TABLE " +
+            ARTISTS_TABLE +
+            "(" +
+            ARTIST_COUNTRY + " TEXT, " +
+            ARTIST_NAME + " TEXT, " +
+            ARTIST_LISTENERS + " TEXT, " +
+            ARTIST_LARGE_PHOTO + " TEXT, " +
+            ARTIST_LARGE_PHOTO_PATH + " TEXT, " +
+            ARTIST_MEGA_PHOTO + " TEXT, " +
+            ARTIST_MEGA_PHOTO_PATH + " TEXT" +
+            ");";
+
     private static final String ALBUM_SQL = "CREATE TABLE " +
-            ALBUMS_TABLE_NAME +
+            ALBUMS_TABLE +
             "(" +
             ARTIST_NAME + " TEXT, " +
             ALBUM_NAME + " TEXT, " +
@@ -46,20 +65,20 @@ public class DataHandler {
     }
 
     private static class DataBaseHelper extends SQLiteOpenHelper {
-
-        public DataBaseHelper(Context context) {
+        DataBaseHelper(Context context) {
             super(context, DATA_BASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            db.execSQL(ARTIST_SQL);
             db.execSQL(ALBUM_SQL);
-
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int i, int i2) {
-            db.execSQL("DROP TABLE IF EXIST " + ALBUMS_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXIST " + ARTISTS_TABLE);
+            db.execSQL("DROP TABLE IF EXIST " + ALBUMS_TABLE);
 
             onCreate(db);
         }
@@ -74,9 +93,86 @@ public class DataHandler {
         dbHelper.close();
     }
 
-    public void saveAlbumToDB(AlbumModel albumModel, String artistName) {
-        sqLiteDB.insert(ALBUMS_TABLE_NAME, null, getAlbumContentValues(albumModel, artistName));
+    public void saveArtistList(List<ArtistModel> artistModelList, String country) {
+        removeAllArtists(country);
+        for (ArtistModel artistModel :
+                artistModelList) {
+            saveArtistToDB(artistModel, country);
+        }
+    }
 
+    private void saveArtistToDB(ArtistModel artistModel, String country) {
+        sqLiteDB.insert(ARTISTS_TABLE, null, getArtistContentValues(artistModel, country));
+    }
+
+    public void updateArtistList(List<ArtistModel> artistModelList, String country) {
+        for (ArtistModel artistModel :
+                artistModelList) {
+            updateArtistInDB(artistModel, country);
+        }
+    }
+
+    private void updateArtistInDB(ArtistModel artistModel, String country) {
+        ContentValues content = new ContentValues();
+        content.put(ARTIST_MEGA_PHOTO_PATH, artistModel.getMegaPhotoFilePath());
+
+        String whereClause = ARTIST_NAME + " = ?";
+        String[] whereArgs = new String[]{artistModel.getName()};
+
+        sqLiteDB.update(ARTISTS_TABLE, getArtistContentValues(artistModel, country), whereClause, whereArgs);
+    }
+
+    @NonNull
+    private ContentValues getArtistContentValues(ArtistModel artistModel, String country) {
+        ContentValues content = new ContentValues();
+        content.put(ARTIST_COUNTRY, country);
+        content.put(ARTIST_NAME, artistModel.getName());
+        content.put(ARTIST_LISTENERS, artistModel.getListeners());
+        content.put(ARTIST_LARGE_PHOTO, artistModel.getLargeImageUrl());
+        content.put(ARTIST_LARGE_PHOTO_PATH, artistModel.getLargePhotoFilePath());
+        content.put(ARTIST_MEGA_PHOTO, artistModel.getMegaImageUrl());
+        content.put(ARTIST_MEGA_PHOTO_PATH, artistModel.getMegaPhotoFilePath());
+        return content;
+    }
+
+    private void removeAllArtists(String country) {
+        String whereClause = ARTIST_COUNTRY + " = ?";
+        String[] whereArgs = new String[]{country};
+        sqLiteDB.delete(ARTISTS_TABLE, whereClause, whereArgs);
+    }
+
+    public ArrayList<ArtistModel> getArtistList(String country) {
+        String whereClause = ARTIST_COUNTRY + " = ?";
+        String[] whereArgs = new String[]{country};
+        Cursor cursor = sqLiteDB.query(ARTISTS_TABLE, null, whereClause, whereArgs, null, null, ARTIST_NAME);
+
+        ArrayList<ArtistModel> models = new ArrayList<ArtistModel>();
+        while (cursor.moveToNext()) {
+            models.add(createArtist(cursor));
+        }
+        cursor.close();
+        return models;
+    }
+
+    public ArtistModel getArtistByName(String artistName) {
+        String whereClause = ARTIST_NAME + " = ?";
+        String[] whereArgs = new String[]{artistName};
+        Cursor cursor = sqLiteDB.query(ARTISTS_TABLE, null, whereClause, whereArgs, null, null, null);
+        cursor.moveToFirst();
+        return createArtist(cursor);
+    }
+
+    private ArtistModel createArtist(Cursor cursor) {
+        ArtistModel artistModel = new ArtistModel();
+
+        artistModel.setName(cursor.getString(cursor.getColumnIndex(ARTIST_NAME)));
+        artistModel.setListeners(cursor.getString(cursor.getColumnIndex(ARTIST_LISTENERS)));
+        artistModel.setLargeImageUrl(cursor.getString(cursor.getColumnIndex(ARTIST_LARGE_PHOTO)));
+        artistModel.setLargePhotoFilePath(cursor.getString(cursor.getColumnIndex(ARTIST_LARGE_PHOTO_PATH)));
+        artistModel.setMegaImageUrl(cursor.getString(cursor.getColumnIndex(ARTIST_MEGA_PHOTO)));
+        artistModel.setMegaPhotoFilePath(cursor.getString(cursor.getColumnIndex(ARTIST_MEGA_PHOTO_PATH)));
+
+        return artistModel;
     }
 
     public void saveAlbumList(List<AlbumModel> albumModelArrayList, String artistName) {
@@ -85,6 +181,10 @@ public class DataHandler {
                 albumModelArrayList) {
             saveAlbumToDB(album, artistName);
         }
+    }
+
+    private void saveAlbumToDB(AlbumModel albumModel, String artistName) {
+        sqLiteDB.insert(ALBUMS_TABLE, null, getAlbumContentValues(albumModel, artistName));
     }
 
     @NonNull
@@ -102,13 +202,13 @@ public class DataHandler {
     private void removeAllAlbums(String artistName) {
         String whereClause = ARTIST_NAME + " = ?";
         String[] whereArgs = new String[]{artistName};
-        sqLiteDB.delete(ALBUMS_TABLE_NAME, whereClause, whereArgs);
+        sqLiteDB.delete(ALBUMS_TABLE, whereClause, whereArgs);
     }
 
     public ArrayList<AlbumModel> getAlbumList(String artistName) {
         String whereClause = ARTIST_NAME + " = ?";
         String[] whereArgs = new String[]{artistName};
-        Cursor cursor = sqLiteDB.query(ALBUMS_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+        Cursor cursor = sqLiteDB.query(ALBUMS_TABLE, null, whereClause, whereArgs, null, null, ALBUM_NAME);
 
         ArrayList<AlbumModel> models = new ArrayList<AlbumModel>();
         while (cursor.moveToNext()) {

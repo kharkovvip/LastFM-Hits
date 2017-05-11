@@ -1,6 +1,5 @@
 package com.rgand.x_prt.lastfmhits.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,10 +15,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.adapter.TopArtistRVAdapter;
 import com.rgand.x_prt.lastfmhits.base.BaseActivity;
+import com.rgand.x_prt.lastfmhits.database.DataHandler;
+import com.rgand.x_prt.lastfmhits.database.task.SaveArtistTask;
+import com.rgand.x_prt.lastfmhits.database.task.SaveMegaArtistPhotoTask;
 import com.rgand.x_prt.lastfmhits.listener.OnArtistItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.artist.ArtistModel;
 import com.rgand.x_prt.lastfmhits.model.artist.GeoArtistData;
@@ -34,9 +37,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class PopularArtistActivity extends BaseActivity implements View.OnClickListener,
-        OnArtistItemClickListener, DialogInterface.OnDismissListener, SwipeRefreshLayout.OnRefreshListener {
+        OnArtistItemClickListener, SwipeRefreshLayout.OnRefreshListener, SaveArtistTask.OnTaskFinishedListener {
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView emptyPlaceholder;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AlertDialog selectLocationDialog;
 
@@ -44,7 +48,9 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
     private boolean isSortingByListeners;
     private String chosenCountry;
     private TopArtistRVAdapter artistRVAdapter;
-    private List<ArtistModel> artistModels = new ArrayList<>();
+    private List<ArtistModel> artistModelList = new ArrayList<>();
+
+    private DataHandler dataHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +58,30 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.activity_popular);
         overridePendingTransition(R.anim.slide_down_in_animation, R.anim.slide_up_out_animation);
 
+        dataHandler = new DataHandler(this);
+
         initViews();
+        getTopArtistsRequest();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        dataHandler.open();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        artistModelList = dataHandler.getArtistList(chosenCountry);
+        artistRVAdapter.setList(sortArtistList(artistModelList));
+        setEmptyPlaceholderVisibility();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dataHandler.close();
     }
 
     private void initViews() {
@@ -84,12 +113,16 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.white);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.site_red);
+
+        emptyPlaceholder = (TextView) findViewById(R.id.empty_view_placeholder);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getTopArtistsRequest();
+    private void setEmptyPlaceholderVisibility() {
+        if (artistModelList.isEmpty()) {
+            emptyPlaceholder.setVisibility(View.VISIBLE);
+        } else {
+            emptyPlaceholder.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -104,16 +137,20 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sort_names:
-                isSortingByListeners = false;
-                artistRVAdapter.setList(sortArtistList(artistModels));
-                break;
-            case R.id.action_sort_listeners:
-                isSortingByListeners = true;
-                artistRVAdapter.setList(sortArtistList(artistModels));
-                break;
-            default:
+        if (!swipeRefreshLayout.isRefreshing()) {
+            switch (item.getItemId()) {
+                case R.id.action_sort_names:
+                    isSortingByListeners = false;
+                    artistRVAdapter.setList(sortArtistList(artistModelList));
+                    break;
+                case R.id.action_sort_listeners:
+                    isSortingByListeners = true;
+                    artistRVAdapter.setList(sortArtistList(artistModelList));
+                    break;
+                default:
+            }
+        } else {
+            showSnackMessage(getString(R.string.please_wait_txt));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -122,26 +159,35 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
      * request to API for getting top artists of chosen (hardcoded) country
      */
     private void getTopArtistsRequest() {
+        checkInternetConnection(PopularArtistActivity.this);
+
         if (!isSwipeRefreshing) {
             showProgressBar();
         } else {
             isSwipeRefreshing = false;
         }
+
         GetArtistsRequest getArtistsRequest = new GetArtistsRequest(chosenCountry);
         getArtistsRequest.setListener(new RequestListener<GeoArtistData>() {
             @Override
             public void onSuccess(GeoArtistData result) {
-                artistModels = result.getTopartists().getArtistModelList();
-                artistRVAdapter.setList(sortArtistList(artistModels));
-                hideProgressBar();
-                swipeRefreshLayout.setRefreshing(false);
+                artistModelList = result.getTopartists().getArtistModelList();
+                artistRVAdapter.setList(sortArtistList(artistModelList));
+                setEmptyPlaceholderVisibility();
+
+                SaveArtistTask artistTask = new SaveArtistTask(
+                        PopularArtistActivity.this,
+                        PopularArtistActivity.this,
+                        artistModelList,
+                        chosenCountry
+                );
+                artistTask.execute();
             }
 
             @Override
             public void onError(String errorMessage) {
                 hideProgressBar();
                 swipeRefreshLayout.setRefreshing(false);
-//                checkInternetConnection(PopularArtistActivity.this, PopularArtistActivity.this);
             }
         });
         getArtistsRequest.execute();
@@ -180,21 +226,27 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.tv_dialog_location_ukraine:
                 chosenCountry = getResources().getString(R.string.country_ukraine_txt);
-                collapsingToolbarLayout.setTitle(chosenCountry);
-                getTopArtistsRequest();
+                refreshRecyclerView();
                 break;
             case R.id.tv_dialog_location_georgia:
                 chosenCountry = getResources().getString(R.string.country_georgia_txt);
-                collapsingToolbarLayout.setTitle(chosenCountry);
-                getTopArtistsRequest();
+                refreshRecyclerView();
                 break;
             case R.id.tv_dialog_location_switzerland:
                 chosenCountry = getResources().getString(R.string.country_switzerland_txt);
-                collapsingToolbarLayout.setTitle(chosenCountry);
-                getTopArtistsRequest();
+                refreshRecyclerView();
                 break;
             default:
         }
+    }
+
+    private void refreshRecyclerView() {
+        artistModelList = dataHandler.getArtistList(chosenCountry);
+        artistRVAdapter.setList(artistModelList);
+        collapsingToolbarLayout.setTitle(chosenCountry);
+        setEmptyPlaceholderVisibility();
+
+        getTopArtistsRequest();
     }
 
     @Override
@@ -204,21 +256,28 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onArtistItemClicked(String artistName, String artistPhoto) {
+    public void onArtistItemClicked(String artistName) {
         Intent intent = new Intent(PopularArtistActivity.this, ArtistInfoActivity.class);
-        intent.putExtra(ArtistInfoActivity.ARTIST_NAME_KEY, artistName);
-        intent.putExtra(ArtistInfoActivity.ARTIST_PHOTO_KEY, artistPhoto);
+        intent.putExtra(ArtistInfoActivity.ARTIST_KEY, artistName);
         startActivity(intent);
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        getTopArtistsRequest();
     }
 
     @Override
     public void onRefresh() {
         isSwipeRefreshing = true;
-        getTopArtistsRequest();
+        refreshRecyclerView();
+    }
+
+    @Override
+    public void onDataLoaded(List<ArtistModel> list) {
+        artistRVAdapter.setList(sortArtistList(list));
+
+        hideProgressBar();
+        swipeRefreshLayout.setRefreshing(false);
+
+        SaveMegaArtistPhotoTask smapt = new SaveMegaArtistPhotoTask(
+                this,
+                chosenCountry);
+        smapt.execute();
     }
 }

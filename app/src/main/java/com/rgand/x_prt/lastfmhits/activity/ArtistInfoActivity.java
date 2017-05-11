@@ -1,6 +1,5 @@
 package com.rgand.x_prt.lastfmhits.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.rgand.x_prt.lastfmhits.R;
 import com.rgand.x_prt.lastfmhits.adapter.TopAlbumRVAdapter;
@@ -22,12 +23,14 @@ import com.rgand.x_prt.lastfmhits.database.task.SaveAlbumTask;
 import com.rgand.x_prt.lastfmhits.listener.OnAlbumItemClickListener;
 import com.rgand.x_prt.lastfmhits.model.album.AlbumModel;
 import com.rgand.x_prt.lastfmhits.model.album.ArtistInfoData;
+import com.rgand.x_prt.lastfmhits.model.artist.ArtistModel;
 import com.rgand.x_prt.lastfmhits.network.listener.RequestListener;
 import com.rgand.x_prt.lastfmhits.network.requests.GetTopAlbumsRequest;
 import com.rgand.x_prt.lastfmhits.util.AlbumByNameComparator;
 import com.rgand.x_prt.lastfmhits.util.AlbumByPlayCountComparator;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,19 +38,19 @@ import java.util.List;
 import static com.rgand.x_prt.lastfmhits.util.AppConstants.TOP_ARTISTS_RV_PHOTO_SIZE;
 
 public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClickListener,
-        DialogInterface.OnDismissListener, SwipeRefreshLayout.OnRefreshListener, SaveAlbumTask.OnTaskFinishedListener {
+        SwipeRefreshLayout.OnRefreshListener, SaveAlbumTask.OnTaskFinishedListener {
 
-    public static final String ARTIST_NAME_KEY = "chosen_artist_name";
-    public static final String ARTIST_PHOTO_KEY = "chosen_artist_photo";
+    public static final String ARTIST_KEY = "chosen_artist";
 
     private boolean isSwipeRefreshing;
     private boolean isSortingByPlaycount;
+    private List<AlbumModel> albumModelList = new ArrayList<>();
     private String chosenArtistName;
-    private String chosenArtistPhotoUrl;
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView emptyPlaceholder;
     private TopAlbumRVAdapter infoRVAdapter;
-    private List<AlbumModel> albumModelList = new ArrayList<>();
+    private ImageView ivArtistPhoto;
 
     private DataHandler dataHandler;
 
@@ -57,11 +60,9 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
         setContentView(R.layout.activity_artist_info);
         overridePendingTransition(R.anim.slide_down_in_animation, R.anim.slide_up_out_animation);
 
-        chosenArtistName = getIntent().getStringExtra(ARTIST_NAME_KEY);
-        chosenArtistPhotoUrl = getIntent().getStringExtra(ARTIST_PHOTO_KEY);
+        chosenArtistName = getIntent().getStringExtra(ARTIST_KEY);
 
-        dataHandler = new DataHandler(ArtistInfoActivity.this);
-
+        dataHandler = new DataHandler(this);
         initViews();
     }
 
@@ -74,8 +75,11 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
     @Override
     protected void onResume() {
         super.onResume();
+        refreshArtistPhoto();
+
         albumModelList = dataHandler.getAlbumList(chosenArtistName);
         infoRVAdapter.setList(sortAlbumList(albumModelList));
+        setEmptyPlaceholderVisibility();
 
         getTopAlbumsRequest();
     }
@@ -93,15 +97,7 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
                 = (CollapsingToolbarLayout) findViewById(R.id.collapsingtoolbarlayout_info_activity);
         collapsingToolbarLayout.setTitle(chosenArtistName);
 
-        ImageView ivArtistPhoto
-                = (ImageView) collapsingToolbarLayout.findViewById(R.id.iv_artist_info_photo);
-        Picasso.with(this)
-                .load(chosenArtistPhotoUrl)
-                .resize(TOP_ARTISTS_RV_PHOTO_SIZE, TOP_ARTISTS_RV_PHOTO_SIZE)
-                .centerCrop()
-                .placeholder(R.drawable.atrist_image_placeholder)
-                .error(R.drawable.atrist_image_placeholder)
-                .into(ivArtistPhoto);
+        ivArtistPhoto = (ImageView) collapsingToolbarLayout.findViewById(R.id.iv_artist_info_photo);
 
         infoRVAdapter = new TopAlbumRVAdapter(this);
         RecyclerView rvArtists = (RecyclerView) findViewById(R.id.rv_top_artists);
@@ -113,6 +109,27 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.white);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.site_red);
+
+        emptyPlaceholder = (TextView) findViewById(R.id.empty_view_placeholder);
+    }
+
+    private void setEmptyPlaceholderVisibility() {
+        if (albumModelList.isEmpty()) {
+            emptyPlaceholder.setVisibility(View.VISIBLE);
+        } else {
+            emptyPlaceholder.setVisibility(View.GONE);
+        }
+    }
+
+    private void refreshArtistPhoto() {
+        ArtistModel chosenArtist = dataHandler.getArtistByName(chosenArtistName);
+        Picasso.with(this)
+                .load(new File(chosenArtist.getMegaPhotoFilePath()))
+                .resize(TOP_ARTISTS_RV_PHOTO_SIZE, TOP_ARTISTS_RV_PHOTO_SIZE)
+                .centerCrop()
+                .placeholder(R.drawable.atrist_image_placeholder)
+                .error(R.drawable.atrist_image_placeholder)
+                .into(ivArtistPhoto);
     }
 
     @Override
@@ -123,16 +140,20 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sort_names:
-                isSortingByPlaycount = false;
-                infoRVAdapter.setList(sortAlbumList(albumModelList));
-                break;
-            case R.id.action_sort_playcount:
-                isSortingByPlaycount = true;
-                infoRVAdapter.setList(sortAlbumList(albumModelList));
-                break;
-            default:
+        if (!swipeRefreshLayout.isRefreshing()) {
+            switch (item.getItemId()) {
+                case R.id.action_sort_names:
+                    isSortingByPlaycount = false;
+                    infoRVAdapter.setList(sortAlbumList(albumModelList));
+                    break;
+                case R.id.action_sort_playcount:
+                    isSortingByPlaycount = true;
+                    infoRVAdapter.setList(sortAlbumList(albumModelList));
+                    break;
+                default:
+            }
+        } else {
+            showSnackMessage(getString(R.string.please_wait_txt));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -141,32 +162,31 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
      * request to API for getting top albums of chosen artist
      */
     private void getTopAlbumsRequest() {
+        checkInternetConnection(ArtistInfoActivity.this);
         if (!isSwipeRefreshing) {
             showProgressBar();
         } else {
             isSwipeRefreshing = false;
         }
+
         GetTopAlbumsRequest getTopAlbumsRequest = new GetTopAlbumsRequest(chosenArtistName);
         getTopAlbumsRequest.setListener(new RequestListener<ArtistInfoData>() {
             @Override
             public void onSuccess(ArtistInfoData result) {
                 albumModelList = result.getTopAlbums().getAlbumModelList();
                 infoRVAdapter.setList(sortAlbumList(albumModelList));
+                setEmptyPlaceholderVisibility();
 
-                SaveAlbumTask sat = new SaveAlbumTask(
+                SaveAlbumTask albumTask = new SaveAlbumTask(
                         ArtistInfoActivity.this,
                         ArtistInfoActivity.this,
                         albumModelList,
                         chosenArtistName);
-                sat.execute();
+                albumTask.execute();
             }
 
             @Override
             public void onError(String errorMessage) {
-//                checkInternetConnection(ArtistInfoActivity.this, ArtistInfoActivity.this);
-//                albumModelList = dataHandler.getAlbumList(chosenArtistName);
-//                infoRVAdapter.setList(sortAlbumList(albumModelList));
-
                 hideProgressBar();
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -200,19 +220,16 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        getTopAlbumsRequest();
-    }
-
-    @Override
     public void onRefresh() {
         isSwipeRefreshing = true;
+        refreshArtistPhoto();
         getTopAlbumsRequest();
     }
 
     @Override
     public void onDataLoaded(List<AlbumModel> list) {
         infoRVAdapter.setList(sortAlbumList(list));
+        setEmptyPlaceholderVisibility();
 
         hideProgressBar();
         swipeRefreshLayout.setRefreshing(false);
