@@ -1,6 +1,6 @@
 package com.rgand.x_prt.lastfmhits.util;
 
-import android.os.Environment;
+import android.content.Context;
 
 import com.rgand.x_prt.lastfmhits.model.artist.ArtistModel;
 
@@ -20,7 +20,7 @@ import static com.rgand.x_prt.lastfmhits.util.AppConstants.MEGA_FILE_PREFIX;
  */
 
 public class FileUtils {
-    public static void saveFilepath(ArtistModel artist, final String artistCountry,
+    public static void saveFilepath(Context context, ArtistModel artist, final String artistCountry,
                                     String photoUrl, boolean isMegaPhoto) {
         try {
 
@@ -28,7 +28,7 @@ public class FileUtils {
             URLConnection connection = url.openConnection();
             InputStream in = connection.getInputStream();
 
-            File cashDirectory = new File(Environment.getExternalStorageDirectory().getPath()
+            File cashDirectory = new File(context.getExternalFilesDir(null).getPath()
                     + File.separator
                     + APP_CASH_DIRECTORY
                     + File.separator

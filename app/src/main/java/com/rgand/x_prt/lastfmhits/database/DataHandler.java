@@ -105,23 +105,6 @@ public class DataHandler {
         sqLiteDB.insert(ARTISTS_TABLE, null, getArtistContentValues(artistModel, country));
     }
 
-    public void updateArtistList(List<ArtistModel> artistModelList, String country) {
-        for (ArtistModel artistModel :
-                artistModelList) {
-            updateArtistInDB(artistModel, country);
-        }
-    }
-
-    private void updateArtistInDB(ArtistModel artistModel, String country) {
-        ContentValues content = new ContentValues();
-        content.put(ARTIST_MEGA_PHOTO_PATH, artistModel.getMegaPhotoFilePath());
-
-        String whereClause = ARTIST_NAME + " = ?";
-        String[] whereArgs = new String[]{artistModel.getName()};
-
-        sqLiteDB.update(ARTISTS_TABLE, getArtistContentValues(artistModel, country), whereClause, whereArgs);
-    }
-
     @NonNull
     private ContentValues getArtistContentValues(ArtistModel artistModel, String country) {
         ContentValues content = new ContentValues();
@@ -144,7 +127,7 @@ public class DataHandler {
     public ArrayList<ArtistModel> getArtistList(String country) {
         String whereClause = ARTIST_COUNTRY + " = ?";
         String[] whereArgs = new String[]{country};
-        Cursor cursor = sqLiteDB.query(ARTISTS_TABLE, null, whereClause, whereArgs, null, null, ARTIST_NAME);
+        Cursor cursor = sqLiteDB.query(ARTISTS_TABLE, null, whereClause, whereArgs, null, null, null);
 
         ArrayList<ArtistModel> models = new ArrayList<ArtistModel>();
         while (cursor.moveToNext()) {
@@ -208,7 +191,7 @@ public class DataHandler {
     public ArrayList<AlbumModel> getAlbumList(String artistName) {
         String whereClause = ARTIST_NAME + " = ?";
         String[] whereArgs = new String[]{artistName};
-        Cursor cursor = sqLiteDB.query(ALBUMS_TABLE, null, whereClause, whereArgs, null, null, ALBUM_NAME);
+        Cursor cursor = sqLiteDB.query(ALBUMS_TABLE, null, whereClause, whereArgs, null, null, null);
 
         ArrayList<AlbumModel> models = new ArrayList<AlbumModel>();
         while (cursor.moveToNext()) {

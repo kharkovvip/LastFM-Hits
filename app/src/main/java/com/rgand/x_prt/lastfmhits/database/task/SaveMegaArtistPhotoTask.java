@@ -15,12 +15,15 @@ import java.util.List;
 
 public class SaveMegaArtistPhotoTask extends AsyncTask<Void, Void, List<ArtistModel>> {
 
+    private Context context;
     private DataHandler dataHandler;
 
     private List<ArtistModel> boostedList;
     private String artistCountry;
 
     public SaveMegaArtistPhotoTask(Context context, String artistCountry) {
+        this.context = context;
+
         dataHandler = new DataHandler(context);
         dataHandler.open();
 
@@ -36,9 +39,9 @@ public class SaveMegaArtistPhotoTask extends AsyncTask<Void, Void, List<ArtistMo
     @Override
     protected List<ArtistModel> doInBackground(Void... params) {
         for (ArtistModel artist : boostedList) {
-            FileUtils.saveFilepath(artist, artistCountry, artist.getMegaImageUrl(), true);
+            FileUtils.saveFilepath(context, artist, artistCountry, artist.getMegaImageUrl(), true);
         }
-        dataHandler.updateArtistList(boostedList, artistCountry);
+        dataHandler.saveArtistList(boostedList, artistCountry);
         dataHandler.close();
         return boostedList;
     }

@@ -45,7 +45,7 @@ public class SaveArtistTask extends AsyncTask<Void, Void, List<ArtistModel>> {
                 if (image.getSize().equals(IMAGE_MODEL_LARGE_KEY)) {
                     if (image.getImageUrl() != null && !TextUtils.isEmpty(image.getImageUrl())) {
                         artist.setLargeImageUrl(image.getImageUrl());
-                        FileUtils.saveFilepath(artist, artistCountry, image.getImageUrl(), false);
+                        FileUtils.saveFilepath(context, artist, artistCountry, image.getImageUrl(), false);
                     }
                 }
                 if (image.getSize().equals(IMAGE_MODEL_MEGA_KEY)) {

@@ -6,7 +6,7 @@ package com.rgand.x_prt.lastfmhits.util;
 
 public class AppConstants {
 
-    public static final String APP_CASH_DIRECTORY = "LastFMCash";
+    public static final String APP_CASH_DIRECTORY = ".LastFMCash";
     public static final String APP_CASH_FILE_NAME = "cover.png";
     public static final String MEGA_FILE_PREFIX = "mega_";
 

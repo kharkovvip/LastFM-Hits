@@ -69,24 +69,25 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
     @Override
     protected void onStart() {
         super.onStart();
-        dataHandler.open();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        dataHandler.open();
         refreshArtistPhoto();
 
         albumModelList = dataHandler.getAlbumList(chosenArtistName);
         infoRVAdapter.setList(sortAlbumList(albumModelList));
-        setEmptyPlaceholderVisibility();
 
+        setEmptyPlaceholderVisibility();
         getTopAlbumsRequest();
+        checkInternetConnection(this);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         dataHandler.close();
     }
 
@@ -98,6 +99,12 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
         collapsingToolbarLayout.setTitle(chosenArtistName);
 
         ivArtistPhoto = (ImageView) collapsingToolbarLayout.findViewById(R.id.iv_artist_info_photo);
+        ivArtistPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshArtistPhoto();
+            }
+        });
 
         infoRVAdapter = new TopAlbumRVAdapter(this);
         RecyclerView rvArtists = (RecyclerView) findViewById(R.id.rv_top_artists);

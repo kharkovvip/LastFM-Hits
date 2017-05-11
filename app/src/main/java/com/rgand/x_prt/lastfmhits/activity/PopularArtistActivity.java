@@ -75,7 +75,9 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
         super.onResume();
         artistModelList = dataHandler.getArtistList(chosenCountry);
         artistRVAdapter.setList(sortArtistList(artistModelList));
+
         setEmptyPlaceholderVisibility();
+        checkInternetConnection(this);
     }
 
     @Override
@@ -242,7 +244,7 @@ public class PopularArtistActivity extends BaseActivity implements View.OnClickL
 
     private void refreshRecyclerView() {
         artistModelList = dataHandler.getArtistList(chosenCountry);
-        artistRVAdapter.setList(artistModelList);
+        artistRVAdapter.setList(sortArtistList(artistModelList));
         collapsingToolbarLayout.setTitle(chosenCountry);
         setEmptyPlaceholderVisibility();
 

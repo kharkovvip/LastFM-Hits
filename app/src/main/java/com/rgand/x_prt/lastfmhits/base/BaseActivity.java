@@ -30,6 +30,19 @@ public class BaseActivity extends AppCompatActivity {
     private AlertDialog networkDialog;
     private SpinnerDialog spinnerDialog;
     private Snackbar snackbar;
+    private DialogInterface.OnClickListener onDialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case BUTTON_NEGATIVE:
+                    finishAffinity();
+                    break;
+                case BUTTON_POSITIVE:
+                    networkDialog.dismiss();
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -61,20 +74,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         networkDialog.show();
     }
-
-    private DialogInterface.OnClickListener onDialogClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case BUTTON_NEGATIVE:
-                    finishAffinity();
-                    break;
-                case BUTTON_POSITIVE:
-                    networkDialog.dismiss();
-                    break;
-            }
-        }
-    };
 
     public void showProgressBar() {
         spinnerDialog = SpinnerDialog.newInstance();
