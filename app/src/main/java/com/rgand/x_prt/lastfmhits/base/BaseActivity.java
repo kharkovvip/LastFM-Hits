@@ -88,19 +88,21 @@ public class BaseActivity extends AppCompatActivity {
 
 
     public void showSnackMessage(String message) {
-        snackbar = Snackbar.make(getWindow().getDecorView(), message, Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction(getString(R.string.ok_txt), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                snackbar.dismiss();
-            }
-        });
-        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.site_red));
-        ViewGroup group = (ViewGroup) snackbar.getView();
-        group.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.snack_bar_color_background));
-        TextView textView = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(ContextCompat.getColor(this, R.color.white));
-        snackbar.show();
+        if (getWindow().getDecorView() != null) {
+            snackbar = Snackbar.make(getWindow().getDecorView(), message, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(getString(R.string.ok_txt), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    snackbar.dismiss();
+                }
+            });
+            snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.site_red));
+            ViewGroup group = (ViewGroup) snackbar.getView();
+            group.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.snack_bar_color_background));
+            TextView textView = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextColor(ContextCompat.getColor(this, R.color.white));
+            snackbar.show();
+        }
     }
 }
