@@ -65,4 +65,20 @@ public class AlbumModel {
     public void setPhotoFilePath(String photoFilePath) {
         this.photoFilePath = photoFilePath;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        AlbumModel that = (AlbumModel) o;
+
+        if (!name.equals(that.name)) return false;
+        if (playcount != null ? !playcount.equals(that.playcount) : that.playcount != null)
+            return false;
+        if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (largeImageUrl != null ? !largeImageUrl.equals(that.largeImageUrl) : that.largeImageUrl != null)
+            return false;
+        return photoFilePath != null ? photoFilePath.equals(that.photoFilePath) : that.photoFilePath == null;
+
+    }
 }

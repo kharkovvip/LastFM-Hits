@@ -71,4 +71,31 @@ public class ArtistModel {
     public void setMegaPhotoFilePath(String megaPhotoFilePath) {
         this.megaPhotoFilePath = megaPhotoFilePath;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArtistModel)) return false;
+
+        ArtistModel that = (ArtistModel) o;
+
+        if (!name.equals(that.name)) return false;
+        if (!listeners.equals(that.listeners)) return false;
+        if (!largeImageUrl.equals(that.largeImageUrl)) return false;
+        if (!largePhotoFilePath.equals(that.largePhotoFilePath)) return false;
+        if (!megaImageUrl.equals(that.megaImageUrl)) return false;
+        return megaPhotoFilePath.equals(that.megaPhotoFilePath);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + listeners.hashCode();
+        result = 31 * result + largeImageUrl.hashCode();
+        result = 31 * result + largePhotoFilePath.hashCode();
+        result = 31 * result + megaImageUrl.hashCode();
+        result = 31 * result + megaPhotoFilePath.hashCode();
+        return result;
+    }
 }

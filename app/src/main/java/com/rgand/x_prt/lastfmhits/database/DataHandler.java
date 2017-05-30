@@ -118,7 +118,7 @@ public class DataHandler {
         return content;
     }
 
-    private void removeAllArtists(String country) {
+    protected void removeAllArtists(String country) {
         String whereClause = ARTIST_COUNTRY + " = ?";
         String[] whereArgs = new String[]{country};
         sqLiteDB.delete(ARTISTS_TABLE, whereClause, whereArgs);
@@ -166,7 +166,7 @@ public class DataHandler {
         }
     }
 
-    private void saveAlbumToDB(AlbumModel albumModel, String artistName) {
+    protected void saveAlbumToDB(AlbumModel albumModel, String artistName) {
         sqLiteDB.insert(ALBUMS_TABLE, null, getAlbumContentValues(albumModel, artistName));
     }
 
@@ -182,7 +182,7 @@ public class DataHandler {
         return content;
     }
 
-    private void removeAllAlbums(String artistName) {
+    protected void removeAllAlbums(String artistName) {
         String whereClause = ARTIST_NAME + " = ?";
         String[] whereArgs = new String[]{artistName};
         sqLiteDB.delete(ALBUMS_TABLE, whereClause, whereArgs);
