@@ -61,7 +61,7 @@ public class DataHandler {
     private DataBaseHelper dbHelper;
 
     public DataHandler(Context context) {
-        dbHelper = new DataBaseHelper(context.getApplicationContext());
+        dbHelper = new DataBaseHelper(context);
     }
 
     private static class DataBaseHelper extends SQLiteOpenHelper {

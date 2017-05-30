@@ -10,7 +10,7 @@ public class AppConstants {
     public static final String APP_CASH_FILE_NAME = "cover.png";
     public static final String MEGA_FILE_PREFIX = "mega_";
 
-    public static final long SPLASH_ANIMATION_DELAY = 3000;
+    public static final long SPLASH_ANIMATION_DELAY = 2500;
 
     public static final String API_BASE_URL = " http://ws.audioscrobbler.com/";
     public static final String API_REQUEST_FORMAT = "json";

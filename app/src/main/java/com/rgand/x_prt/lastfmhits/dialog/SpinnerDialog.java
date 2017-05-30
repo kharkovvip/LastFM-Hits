@@ -27,15 +27,11 @@ public class SpinnerDialog extends DialogFragment {
         return new SpinnerDialog();
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         dialog = getDialog();
+        dialog.setCancelable(false);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return inflater.inflate(R.layout.dialog_spinner, container, false);
     }
@@ -44,7 +40,6 @@ public class SpinnerDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         if (dialog != null) {
-            dialog.setCancelable(false);
 
             Window window = dialog.getWindow();
             if (window != null) {
