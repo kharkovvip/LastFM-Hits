@@ -1,9 +1,11 @@
 language: java
-install: true
+install: skip
 
 os: linux
 dist: trusty
 jdk: oraclejdk8
+
+  ./gradlew check
 
 branches:
   only:
