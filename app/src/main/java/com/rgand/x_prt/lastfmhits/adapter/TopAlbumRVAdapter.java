@@ -74,7 +74,7 @@ public class TopAlbumRVAdapter extends RecyclerView.Adapter<TopAlbumRVAdapter.Al
         }
 
         void bind(final AlbumModel model) {
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load(new File(model.getPhotoFilePath()))
                     .resize(TOP_ALBUM_RV_PHOTO_SIZE, TOP_ALBUM_RV_PHOTO_SIZE)
                     .centerCrop()

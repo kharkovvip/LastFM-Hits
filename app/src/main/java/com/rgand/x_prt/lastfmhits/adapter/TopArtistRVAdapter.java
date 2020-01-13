@@ -72,7 +72,7 @@ public class TopArtistRVAdapter extends RecyclerView.Adapter<TopArtistRVAdapter.
         }
 
         void bind(final ArtistModel model) {
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load(new File(model.getLargePhotoFilePath()))
                     .resize(TOP_ARTISTS_RV_PHOTO_SIZE, TOP_ARTISTS_RV_PHOTO_SIZE)
                     .centerCrop()
