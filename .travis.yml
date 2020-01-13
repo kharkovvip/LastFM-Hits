@@ -11,14 +11,9 @@ android:
     # The SDK version used to compile your project
     - android-26
 
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - addon-google_apis-google-26
-
 before_script:
   - chmod a+x gradlew
   - chmod a+x gradle/wrapper/gradle-wrapper.jar
 
-script: gradlew build
+script:
+  - ./gradlew build
