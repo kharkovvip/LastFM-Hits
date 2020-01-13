@@ -130,7 +130,7 @@ public class ArtistInfoActivity extends BaseActivity implements OnAlbumItemClick
 
     private void refreshArtistPhoto() {
         ArtistModel chosenArtist = dataHandler.getArtistByName(chosenArtistName);
-        Picasso.with(this)
+        Picasso.get()
                 .load(new File(chosenArtist.getMegaPhotoFilePath()))
                 .resize(TOP_ARTISTS_RV_PHOTO_SIZE, TOP_ARTISTS_RV_PHOTO_SIZE)
                 .centerCrop()
