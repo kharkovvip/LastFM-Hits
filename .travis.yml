@@ -1,5 +1,5 @@
 language: java
-install: install
+install: gradle wrapper --gradle-version 5.4.1
 
 os: linux
 dist: trusty
