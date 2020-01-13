@@ -1,14 +1,9 @@
 language: java
-install: skip
+install: gradle wrapper --gradle-version 5.4.1
 
 os: linux
 dist: trusty
 jdk: oraclejdk8
-
-before_script:
-  - chmod a+x gradlew
-
-sccript: ./gradlew build
 
 branches:
   only:
